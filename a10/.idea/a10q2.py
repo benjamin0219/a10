@@ -9,7 +9,7 @@
 from a10q1 import *
 import check
 
-
+num_rank = ["1", "2", "3", "4", "5", "6", "7"]
 class Bid:
     '''
     Fields:
@@ -112,18 +112,19 @@ def valid_bid(bids, new_bid):
                    Bid("pass", None)], Bid("double", None))
                      => True
     '''
-    l = len(bids)
-    if l == 0:
+    if len(bids) == 0:
         return new_bid.value not in ['double', 'redouble']
     if new_bid.value == 'double':
-        return not ((l == 1 and bids[0].value == 'pass') or (l >= 2 and bids[l-2].value in Bid.Numeric_value))
+        return not ((len(bids) == 1 and bids[0].value == 'pass') or (len(bids) >= 2 and bids[len(bids)-2].value in\
+                                                                     Bid.num_rank))
     if new_bid.value == 'redouble':
-        return not ((l ==1) or ( l >= 2 and ((bids[l-2].value in Bid.Numeric_value and bids[l-3].value == 'double'))))
-    if new_bid.value in bids:
-        return (bids[l-1] < new_bid or bids[l-1].value in ['pass', 'double', 'redouble']) and \
-               (bids[l-2] < new_bid or bids[l-2].value in ['pass', 'double', 'redouble']) and \
-               (bids[l-3] < new_bid or bids[l-3].value in ['pass', 'double', 'redouble'])
-    if l >= 4 and all([i.value == 'pass' for i in bids[l-3:l]]):
+        return not ((len(bids) ==1) or (len(bids) >= 2 and ((bids[len(bids)-2].value in Bid.Numeric_value and \
+                                                             bids[len(bids)-3].value == 'double'))))
+    if new_bid.value in Bid.num_rank:
+        return (bids[len(bids)-1] < new_bid or bids[len(bids)-1].value in ['pass', 'double', 'redouble']) and \
+               (bids[len(bids)-2] < new_bid or bids[len(bids)-2].value in ['pass', 'double', 'redouble']) and \
+               (bids[len(bids)-3] < new_bid or bids[len(bids)-3].value in ['pass', 'double', 'redouble'])
+    if len(bids) >= 4 and all([i.value == 'pass' for i in bids[l-3:len(bids)]]):
         return False
     return True
     pass
