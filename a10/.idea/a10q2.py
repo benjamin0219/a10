@@ -94,6 +94,10 @@ def valid_bid(bids, new_bid):
                      => True
     '''
     ##YOUR CODE GOES HERE
+    for i in range(len(bids)):
+        for j in range(len(bids[i]):
+            if bids[i][j] == 'pass':
+
     pass
 
 
