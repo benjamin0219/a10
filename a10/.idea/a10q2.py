@@ -9,7 +9,7 @@
 from a10q1 import *
 import check
 
-num_rank = ["1", "2", "3", "4", "5", "6", "7"]
+
 class Bid:
     '''
     Fields:
@@ -24,6 +24,8 @@ class Bid:
 
     value_rank = ["pass","1","2","3","4","5","6","7","double","redouble"]
 
+    num_rank = ["1", "2", "3", "4", "5", "6", "7"]
+
     suit_rank = [None,"C","D","H","S","NT"]
 
     def __init__(self, bid_value, bid_suit):
@@ -36,8 +38,11 @@ class Bid:
         Requires: Conditions from Fields above are met.
         '''
 
-        self.suit = bid_suit
         self.value = bid_value
+        self.suit = bid_suit
+
+        pass
+
 
 
     def __repr__(self):
@@ -112,6 +117,44 @@ def valid_bid(bids, new_bid):
                    Bid("pass", None)], Bid("double", None))
                      => True
     '''
+
+
+    if len(bids) == 4:
+        return False
+
+    if len(bids) == 0:
+        return new_bid.value not in ['double', 'redouble']
+
+    maximum_bid = bids[0]
+
+    for i in range(len(bids)):
+        bid = bids[i]
+        print(bids)
+        print(Bid.value_rank.index(bid.value))
+        print("FUCK")
+        if(0<Bid.value_rank.index(bid.value)<8):
+            if(bid > maximum_bid):
+                maximum_bid = bid
+        elif(Bid.value_rank.index(bid.value)==8):
+            #Double must be following a numeric bid
+            print("In!!!!")
+            if not (0<Bid.value_rank.index(bids[i-1].value)<8):
+
+                return False
+        elif(Bid.value_rank.index(bid.value)==8):
+            #ReDouble must be following a dobule
+            if not (Bid.value_rank.index(bids[i-1].value)==8):
+                return False
+
+
+    if(new_bid > maximum_bid):
+        return True
+    elif Bid.value_rank.index(new_bid.value) == 0:
+        return True
+    else:
+        return False
+
+    '''
     if len(bids) == 0:
         return new_bid.value not in ['double', 'redouble']
     if new_bid.value == 'double':
@@ -120,7 +163,7 @@ def valid_bid(bids, new_bid):
     if new_bid.value == 'redouble':
         return not ((len(bids) ==1) or (len(bids) >= 2 and ((bids[len(bids)-2].value in Bid.Numeric_value and \
                                                              bids[len(bids)-3].value == 'double'))))
-    if new_bid.value in Bid.num_rank:
+    if new_bid.value in Bid.value_rank:
         return (bids[len(bids)-1] < new_bid or bids[len(bids)-1].value in ['pass', 'double', 'redouble']) and \
                (bids[len(bids)-2] < new_bid or bids[len(bids)-2].value in ['pass', 'double', 'redouble']) and \
                (bids[len(bids)-3] < new_bid or bids[len(bids)-3].value in ['pass', 'double', 'redouble'])
@@ -128,6 +171,7 @@ def valid_bid(bids, new_bid):
         return False
     return True
     pass
+    '''
 
 
 def bidding_complete(bids):
@@ -147,10 +191,13 @@ def bidding_complete(bids):
        bidding_complete([Bid("1", "C"), Bid("3", "NT"),
                   Bid("pass", None), Bid("pass", None)]) => False
     '''
-    if valid_bid(bids, new_bid) == True:
-        return True
-    else:
-        return False
+
+    for i in range(len(bids)-1):
+        valid = valid_bid(bids[0:i],bids[i+1])
+        if valid == False:
+            return False
+    return True
+
     pass
 
 
@@ -190,13 +237,19 @@ def contract(bids):
     maximum_bid = []
     maximum_bid.append(bids[0])
     doubling_bids = []
+    passing_bids = []
 
     for bid in bids:
         if(bid > maximum_bid[0]):
             maximum_bid[0] = bid
         elif(Bid.value_rank.index(bid.value)>=8):
             doubling_bids.append(bid)
+        else:
+            passing_bids.append(bid)
+    if(len(passing_bids)==len(bids)):
+        return None
     return maximum_bid + doubling_bids
+
 
     pass
 
@@ -225,8 +278,9 @@ def declarer(starting_team, bids):
                   Bid("3", "C"), Bid("pass", None),
                   Bid("pass", None), Bid("pass", None)]) => "North"
     '''
-    all_pass = [Bid("pass", None)]*4
+    all_pass = [Bid("pass", None)]*len(bids)
     if all_pass == bids:
+        print("ALL PAAA")
         return None
     deal_contract = contract(bids)
     players = ["North", "East", "South", "West"]
@@ -341,7 +395,7 @@ check.expect("Test valid double",
              valid_bid([Bid("1", "C"), Bid("pass", None), Bid("pass", None)],
                        Bid("double", None)), True)
 
-## Examples contract
+## Examples contract`
 
 
 check.expect("Test all pass",
