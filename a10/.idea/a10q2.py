@@ -22,6 +22,10 @@ class Bid:
        If value is non-numeric, then suit must be None
     '''
 
+    value_rank = ["pass","1","2","3","4","5","6","7","double","redouble"]
+
+    suit_rank = [None,"C","D","H","S","NT"]
+
     def __init__(self, bid_value, bid_suit):
         '''
         Initialized a valid Bridge bid.
@@ -31,8 +35,10 @@ class Bid:
         __init__: Bid Str (anyof Str None) -> None
         Requires: Conditions from Fields above are met.
         '''
-        self.value = bid_value
+
         self.suit = bid_suit
+        self.value = bid_value
+
 
     def __repr__(self):
         '''
@@ -51,21 +57,35 @@ class Bid:
 
         __eq__: Bid Any -> Bool
         '''
-        return ((self.value == other.vavlue) and (self.suit == other.suit))
+        return ((self.value == other.value) and (self.suit == other.suit))
         pass
 
     def __lt__(self, other):
+
         '''
         Returns True if both self and other are numeric bids and
         self is a bid that comes before other. False otherwise
 
         __lt__: Bid Any -> Bool
         '''
-        if ((1 <= self.value <= 7) and (1<= other.value <= 7)):
-            return True
-        else:
+
+        #if(self.value.isnumeric() and other.value.isnumeric()):
+
+        if(self==other):
             return False
-        pass
+        else:
+            if(self.value in Bid.value_rank and other.value in Bid.value_rank):
+                if Bid.value_rank.index(other.value) > Bid.value_rank.index(self.value):
+                    return True
+                elif Bid.value_rank.index(other.value) == Bid.value_rank.index(self.value):
+                    if Bid.suit_rank.index(other.suit) > Bid.suit_rank.index(self.suit):
+                        return True
+                else:
+                    return False
+            else:
+                return False
+
+    pass
 
 
 def valid_bid(bids, new_bid):
@@ -94,9 +114,20 @@ def valid_bid(bids, new_bid):
                      => True
     '''
     ##YOUR CODE GOES HERE
-    for i in range(len(bids)):
-        for j in range(len(bids[i]):
-            if bids[i][j] == 'pass':
+
+    for bid in (bids):
+        bid > new_bid
+        #Find the biggest bid
+        if bid.value.isnumeric():
+            if Bid.value_rank.index(bid.value)>Bid.value_rank.index(maximum_value):
+                #If the bid is greater than default, replace it
+                maximum_value = int(bid.value)
+            elif Bid.value_rank.index(bid.value)==Bid.value_rank.index(maximum_value):
+                #Check if the suit is bigger when having the same value
+                if Bid.suit_rank.index(bid.suit) > Bid.suit_rank.index(maximum_suit):
+                    maximum_suit = bid.suit
+            else:
+                pass
 
     pass
 
@@ -154,6 +185,21 @@ def contract(bids):
                   Bid("pass", None)]) => [Bid("1", "S"), None]
     '''
     ##YOUR CODE GOES HERE
+
+    maximum_bid = []
+    maximum_bid.append(bids[0])
+    doubling_bids = []
+
+    for bid in bids:
+        if(bid > maximum_bid[0]):
+            maximum_bid[0] = bid
+        elif(Bid.value_rank.index(bid.value)>=8):
+            doubling_bids.append(bid)
+        else:
+            pass
+
+    return maximum_bid + doubling_bids
+
     pass
 
 
