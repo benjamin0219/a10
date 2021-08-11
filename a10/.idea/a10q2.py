@@ -87,6 +87,14 @@ class Bid:
 
     pass
 
+def ifall_pass (bids):
+    p = 0
+    while p in range(len(bids)):
+        if bids[p].value == "pass":
+            p = p + 1
+        else:
+            return False
+    return True
 
 def valid_bid(bids, new_bid):
     '''
@@ -113,23 +121,51 @@ def valid_bid(bids, new_bid):
                    Bid("pass", None)], Bid("double", None))
                      => True
     '''
-    ##YOUR CODE GOES HERE
-
-    for bid in (bids):
-        if bid > new_bid:
-
-        #Find the biggest bid
-        if bid.value.isnumeric():
-            if Bid.value_rank.index(bid.value)>Bid.value_rank.index(maximum_value):
-                #If the bid is greater than default, replace it
-                maximum_value = int(bid.value)
-            elif Bid.value_rank.index(bid.value)==Bid.value_rank.index(maximum_value):
-                #Check if the suit is bigger when having the same value
-                if Bid.suit_rank.index(bid.suit) > Bid.suit_rank.index(maximum_suit):
-                    maximum_suit = bid.suit
+    l = len(bids)
+    if bids == []:
+        if new_bid.value == "double" or new_bid.value == "redouble":
+            return False
+        else:
+            return True
+    elif new_bid.value == "double":
+        if l == 1:
+            if bids[0].value == "pass":
+                return False
             else:
-                pass
-
+                return True
+        if l > 1:
+            if (bids[0].suit != None and l == 2) or \
+                    (bids[1].suit != None and l == 3):
+                return False
+            else:
+                return True
+    elif new_bid.value == "redouble":
+        if l == 1:
+            return False
+        elif l > 1:
+            if bids[0].suit != None and \
+                    bids[1].value == "double" and bids[2].value == "pass":
+                return True
+            else:
+                return False
+    elif l > 3:
+        return False
+    elif l < 4 and new_bid.suit == None:
+        return True
+    elif l < 4 and new_bid.suit != None:
+        if (ifall_pass (bids)):
+            return True
+        for i in bids:
+            if i.value > new_bid.value:
+                return False
+            elif i.value == new_bid.value:
+                if __lt__(i, new_bid):
+                    return True
+                else:
+                    return False
+            else:
+                return True
+        return True
     pass
 
 
@@ -150,7 +186,10 @@ def bidding_complete(bids):
        bidding_complete([Bid("1", "C"), Bid("3", "NT"),
                   Bid("pass", None), Bid("pass", None)]) => False
     '''
-    ##YOUR CODE GOES HERE
+    if valid_bid(bids, new_bid) == True:
+        return True
+    else:
+        return False
     pass
 
 
@@ -196,9 +235,6 @@ def contract(bids):
             maximum_bid[0] = bid
         elif(Bid.value_rank.index(bid.value)>=8):
             doubling_bids.append(bid)
-        else:
-            pass
-
     return maximum_bid + doubling_bids
 
     pass
