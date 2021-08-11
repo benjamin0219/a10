@@ -116,7 +116,8 @@ def valid_bid(bids, new_bid):
     ##YOUR CODE GOES HERE
 
     for bid in (bids):
-        bid > new_bid
+        if bid > new_bid:
+
         #Find the biggest bid
         if bid.value.isnumeric():
             if Bid.value_rank.index(bid.value)>Bid.value_rank.index(maximum_value):
