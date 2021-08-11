@@ -87,15 +87,6 @@ class Bid:
 
     pass
 
-def ifall_pass (bids):
-    p = 0
-    while p in range(len(bids)):
-        if bids[p].value == "pass":
-            p = p + 1
-        else:
-            return False
-    return True
-
 def valid_bid(bids, new_bid):
     '''
     Returns True if new_bid is allowed in a Bridge
@@ -122,50 +113,19 @@ def valid_bid(bids, new_bid):
                      => True
     '''
     l = len(bids)
-    if bids == []:
-        if new_bid.value == "double" or new_bid.value == "redouble":
-            return False
-        else:
-            return True
-    elif new_bid.value == "double":
-        if l == 1:
-            if bids[0].value == "pass":
-                return False
-            else:
-                return True
-        if l > 1:
-            if (bids[0].suit != None and l == 2) or \
-                    (bids[1].suit != None and l == 3):
-                return False
-            else:
-                return True
-    elif new_bid.value == "redouble":
-        if l == 1:
-            return False
-        elif l > 1:
-            if bids[0].suit != None and \
-                    bids[1].value == "double" and bids[2].value == "pass":
-                return True
-            else:
-                return False
-    elif l > 3:
+    if l == 0:
+        return new_bid.value not in ['double', 'redouble']
+    if new_bid.value == 'double':
+        return not ((l == 1 and bids[0].value == 'pass') or (l >= 2 and bids[l-2].value in Bid.Numeric_value))
+    if new_bid.value == 'redouble':
+        return not ((l ==1) or ( l >= 2 and ((bids[l-2].value in Bid.Numeric_value and bids[l-3].value == 'double'))))
+    if new_bid.value in bids:
+        return (bids[l-1] < new_bid or bids[l-1].value in ['pass', 'double', 'redouble']) and \
+               (bids[l-2] < new_bid or bids[l-2].value in ['pass', 'double', 'redouble']) and \
+               (bids[l-3] < new_bid or bids[l-3].value in ['pass', 'double', 'redouble'])
+    if l >= 4 and all([i.value == 'pass' for i in bids[l-3:l]]):
         return False
-    elif l < 4 and new_bid.suit == None:
-        return True
-    elif l < 4 and new_bid.suit != None:
-        if (ifall_pass (bids)):
-            return True
-        for i in bids:
-            if i.value > new_bid.value:
-                return False
-            elif i.value == new_bid.value:
-                if __lt__(i, new_bid):
-                    return True
-                else:
-                    return False
-            else:
-                return True
-        return True
+    return True
     pass
 
 
